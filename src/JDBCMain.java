@@ -56,4 +56,13 @@ public class JDBCMain {
             }//end finally try
         }//end try
     }
+    
+    public static String dispNull (String input) {
+        //because of short circuiting, if it's null, it never checks the length.
+        if (input == null || input.length() == 0)
+            return "N/A";
+        else
+            return input;
+    }
+
 }
