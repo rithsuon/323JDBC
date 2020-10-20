@@ -8,6 +8,8 @@ import java.util.Scanner;
 /**
  *
  * @author Rith
+ * 
+ * Test andrew gitignore
  */
 public class JDBCMain {
     public static String DB_URL = "jdbc:derby://localhost:1527/";
