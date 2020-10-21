@@ -26,7 +26,14 @@ public class JDBCMain {
         user = input.nextLine();
         System.out.println("Enter password: ");
         pass = input.nextLine();
-        DB_URL = DB_URL + DBNAME + ";user=" + user + ";password=" + pass;
+        if(user.length() == 0 && pass.length() == 0)
+        {
+            DB_URL = DB_URL + DBNAME + ";user=" + null + ";password=" + null;
+        }
+        else
+        {
+            DB_URL = DB_URL + DBNAME + ";user=" + user + ";password=" + pass;
+        }
         Connection conn = null;
         Statement stmt = null;
         try {
@@ -35,6 +42,56 @@ public class JDBCMain {
             System.out.println("Connecting to database...");
             conn = DriverManager.getConnection(DB_URL);
             System.out.println("Connection Successful!");
+            stmt = conn.createStatement();
+            
+            String writingGroup = "CREATE TABLE WritingGroups"
+                    + "( GroupName VARCHAR(20)NOT NULL,"
+                    +"HeadWriter VARCHAR(20)NOT NULL,"
+                    + "YearFormed int NOT NULL,"
+                    + "Subject VARCHAR(20)NOT NULL);";
+            stmt.executeUpdate(writingGroup);
+            System.out.println("Created WritingGroup Table");
+            
+            String Publishers = "CREATE TABLE Publishers"
+                    + "( PublisherName VARCHAR(20)NOT NULL,"
+                    + " PublisherAddress VARCHAR(30)NOT NULL,"
+                    + "PublisherPhone int NOT NULL,"
+                    + "PublisherEmail VARCHAR(20)NOT NULL);";
+            stmt.executeUpdate(Publishers);
+            System.out.println("Created Publisher Table");
+            
+            String Books = "CREATE TABLE Books"
+                    + "( GroupName VARCHAR(20)NOT NULL,"
+                    + " Booktitle VARCHAR(20)NOT NULL,"
+                    + "PublisherName VARCHAR(20)NOT NULL,"
+                    + "YearsPublished int NOT NULL,"
+                    + "NumberPages int NOT NULL);";
+            stmt.executeUpdate(Books);
+            System.out.println("Created Book Table");
+            String pk1 = "ALTER TABLE WritingGroups ADD CONSTRAINT writinggroups_pk"
+                    + "primary key (GroupName);";
+            stmt.executeUpdate(pk1);
+            System.out.println("Added pk to writingGroups Table");
+            
+            String pk2 = "ALTER TABLE Publishers ADD CONSTRAINT publishers_pk" +
+"primary key (PublisherName);";
+            stmt.executeUpdate(pk2);
+            System.out.println("Added pk to publishers Table");
+            
+            String pk3 = "ALTER TABLE Books ADD CONSTRAINT books_pk" +
+"primary key (GroupName, Booktitle);";
+            stmt.executeUpdate(pk3);
+            System.out.println("Added pk to books Table");
+            
+            String fk1 = "ALTER TABLE Books ADD CONSTRAINT books_fk" +
+"foreign key (GroupName) REFERENCES WritingGroups (GroupName);";
+            stmt.executeUpdate(fk1);
+            System.out.println("Added fk to books Table");
+            
+            String fk2 = "ALTER TABLE Books ADD CONSTRAINT books_fk2" +
+"foreign key (PublisherName) REFERENCES Publishers (PublisherName);";
+            stmt.executeUpdate(fk2);
+            System.out.println("Added fk2 to books Table");  
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException ce) {
