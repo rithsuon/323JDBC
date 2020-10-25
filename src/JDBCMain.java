@@ -18,6 +18,7 @@ public class JDBCMain {
     public static String pass;
     static Scanner input = new Scanner(System.in);
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
+    static final String PRINT_FORMAT="%-25s%-25s%-25s%-25s\n";
     
     public static void main(String[] args) {
         String query;
@@ -55,23 +56,32 @@ public class JDBCMain {
                 
                 //Evaluate user choice
                 if (choice.equals("1")){
-                    query = "select GROUPNAME from WRITINGGROUPS";
+                    query = "select * from WRITINGGROUPS";
                     rs = stmt.executeQuery(query);
                     System.out.println("\nWriting Groups: ");
+                    System.out.printf(PRINT_FORMAT, "GROUPNAME", "HEADWRITER", "YEARFORMED","SUBJECT");
                     while (rs.next()){
                         String groupName = rs.getString("GROUPNAME");
-                        System.out.println(groupName);
+                        String headWriter = rs.getString("HEADWRITER");
+                        String yearFormed = rs.getString("YEARFORMED");
+                        String subject = rs.getString("SUBJECT");
+                        System.out.printf(PRINT_FORMAT, dispNull(groupName), dispNull(headWriter), dispNull(yearFormed), dispNull(subject));
                     }
                     System.out.println("\n");
                 }
                 
                 if(choice.equals("2")){
-                    query = "select PUBLISHERNAME from PUBLISHERS";
+                    query = "select * from PUBLISHERS";
                     rs = stmt.executeQuery(query);
                     System.out.println("\nPublishers:");
+                    String localFormat = "%-35s%-45s%-35s%-35s\n";
+                    System.out.printf(localFormat, "PUBLISHERNAME", "PUBLISHERADDRESS", "PUBLISHERPHONE","PUBLISHEREMAIL");
                     while(rs.next()){
                         String publisherName = rs.getString("PUBLISHERNAME");
-                        System.out.println(publisherName);
+                        String address = rs.getString("PUBLISHERADDRESS");
+                        String phone = rs.getString("PUBLISHERPHONE");
+                        String email = rs.getString("PUBLISHEREMAIL");
+                        System.out.printf(localFormat, dispNull(publisherName), dispNull(address), dispNull(phone), dispNull(email));
                     }
                     System.out.println("\n");
                 }
@@ -80,9 +90,10 @@ public class JDBCMain {
                     query = "select BOOKTITLE from BOOKS";
                     rs = stmt.executeQuery(query);
                     System.out.println("\nBooks:");
+                    System.out.print("BOOKTITLE\n");
                     while(rs.next()){
                         String bookTitle = rs.getString("BOOKTITLE");
-                        System.out.println(bookTitle);
+                        System.out.println(dispNull(bookTitle));
                     }
                     System.out.println("\n");
                 }
