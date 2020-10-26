@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 import java.sql.*;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 /**
  *
@@ -102,7 +103,8 @@ public class JDBCMain {
                 }
                 
                 if(choice.equals("4")){
-                    String PRINT_FORMAT2 ="%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s\n";
+                    //String PRINT_FORMAT2 ="%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s\n";
+                    String PRINT_FORMAT2 = "%-25s%-35s%-50s%-25s%-35s" + PRINT_FORMAT;
                     query = "select * from WRITINGGROUPS natural join books natural join publishers where groupname = ?";
                     preparedStatement2 = conn.prepareStatement(query);
                     System.out.println("What group would you like to get all data from?");
@@ -148,17 +150,20 @@ public class JDBCMain {
                     preparedStatement2.setInt(5, numPages);
                     
                     int rows = preparedStatement2.executeUpdate();
-                    System.out.println("Executed. " + rows + " rows affected.\n");
+                    System.out.println("Executed. " + rows + " row(s) affected.\n");
                     
                     } catch (SQLIntegrityConstraintViolationException e) {
                         
                         System.out.println("Execution failed! Invalid input.");
                         System.out.println(e.getMessage());
+                    } catch (InputMismatchException e) {
+                        System.out.println("Execution failed! Invalid input type (int type required).");
                     }
                 }
                 
                 if(choice.equals("6")){
-                    String PRINT_FORMAT2 ="%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s\n";
+                    //String PRINT_FORMAT2 ="%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s\n";
+                    String PRINT_FORMAT2 = "%-25s%-25s%-45s%-25s%-35s" + PRINT_FORMAT;
                     query = "select * from PUBLISHERS natural join BOOKS natural join WRITINGGROUPS where publishername = ?";
                     preparedStatement2 = conn.prepareStatement(query);
                     System.out.println("What publisher would you like to get all data from?");
