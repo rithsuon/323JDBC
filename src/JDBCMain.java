@@ -222,14 +222,15 @@ public class JDBCMain {
                 
                 if(choice.equals("8")) {
                     try{
-                        //Prepared statement to update publisher name from PUBLISHERS
-                        query = "update publishers set publishername = ?, publisheraddress = ?,"
-                                + "publisherphone = ?, publisheremail = ? where publishername = ?";
+                        //Prepared statement to insert new publisher
+                        query = "insert into publishers(publishername, publisheraddress, publisherphone, publisheremail) values"
+                                + "(?, ?, ?, ?)";
                         preparedStatement2 = conn.prepareStatement(query);
-                        //User inputs what publisher they would like to be renamed
+                        //User inputs what publisher they would like to replace
                         System.out.println("What publisher would you like to be replaced?");
                         String oldPubName = input.nextLine();
-                        //User inputs what the new publisher will be
+                        
+                        //User inputs all info for the new publisher
                         System.out.println("Please input the name of the new publisher:");
                         String newPubName = input.nextLine();
                         System.out.println("Please input the address of the new publisher:");
@@ -239,7 +240,7 @@ public class JDBCMain {
                         System.out.println("Please input the email address of the new publisher:");
                         String newPubEmail = input.nextLine();
                         
-                        //Remove foreign key constraint from books so that we can edit publisher name
+                        //Remove foreign key constraint from books so that we can edit publisher name for books
                         query = "alter table books drop constraint books_publisher_fk";
                         stmt.executeUpdate(query);
                         
@@ -248,7 +249,7 @@ public class JDBCMain {
                         preparedStatement2.setString(2, newPubAddress);
                         preparedStatement2.setString(3, newPubPhone);
                         preparedStatement2.setString(4, newPubEmail);
-                        preparedStatement2.setString(5, oldPubName);
+                        //preparedStatement2.setString(5, oldPubName);
                         int rows = preparedStatement2.executeUpdate();
                         
                         //Second prepared statement to edit publisher name from BOOKS
