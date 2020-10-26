@@ -52,7 +52,8 @@ public class JDBCMain {
             while(true){
                 //Print menu
                 System.out.println("What would you like to do?\n1.List all writing groups\n2.List all publishers\n"
-                        + "3.List all book titles\n"+ "4.List all data for a writing group\n"+"E.Exit");
+                        + "3.List all book titles\n"+ "4.List all data for a writing group\n"+"5.Insert a new book\n"
+                        + "6.List all data from a publisher\n"+"E.Exit");
                 String choice = input.nextLine();
                 
                 //Evaluate user choice
@@ -133,6 +134,34 @@ public class JDBCMain {
                     String pub = input.nextLine();
                     System.out.println("Enter book title: ");
                     String title = input.nextLine();
+                }
+                
+                if(choice.equals("6")){
+                    String PRINT_FORMAT2 ="%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s\n";
+                    query = "select * from PUBLISHERS natural join BOOKS natural join WRITINGGROUPS where publishername = ?";
+                    preparedStatement2 = conn.prepareStatement(query);
+                    System.out.println("What publisher would you like to get all data from?");
+                    choice = input.nextLine();
+                    preparedStatement2.setString(1, choice);
+                    rs = preparedStatement2.executeQuery();
+                    
+                    while(rs.next()){
+                        String groupName = rs.getString("GROUPNAME");
+                        String publisherName = rs.getString("PUBLISHERNAME");
+                        String address = rs.getString("PUBLISHERADDRESS");
+                        String phone = rs.getString("PUBLISHERPHONE");
+                        String email = rs.getString("PUBLISHEREMAIL");
+                        String headWriter = rs.getString("HEADWRITER");
+                        String yearFormed = rs.getString("YEARFORMED");
+                        String subject = rs.getString("SUBJECT");
+                        String bookTitle = rs.getString("BOOKTITLE");
+                        String yearPublished = rs.getString("YEARPUBLISHED");
+                        String numberPages = rs.getString("NUMBERPAGES");
+                        System.out.printf(PRINT_FORMAT2, dispNull(groupName), dispNull(publisherName),dispNull(address),dispNull(phone),
+                                dispNull(email),dispNull(headWriter),dispNull(yearFormed)
+                                ,dispNull(subject),dispNull(bookTitle),dispNull(yearPublished),dispNull(numberPages));
+                    }
+                    System.out.println("\n");
                 }
                                 
                 if(choice.equals("E") || choice.equals("e")) {
