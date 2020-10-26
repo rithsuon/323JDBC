@@ -10,7 +10,7 @@ import java.util.Scanner;
  *
  * @author Rith
  * 
- * Test andrew gitignore
+ * 
  */
 public class JDBCMain {
     public static String DB_URL = "jdbc:derby://localhost:1527/";
@@ -56,7 +56,7 @@ public class JDBCMain {
                 System.out.println("\nWhat would you like to do?\n1.List all writing groups\n2.List all publishers\n"
                         + "3.List all book titles\n"+ "4.List all data for a writing group\n"+"5.Insert a new book\n"
                         + "6.List all data from a publisher\n"+
-                        "7.List all data from a book\n"+"E.Exit");
+                        "7.List all data from a book\n"+"8.Insert a new publisher\n"+"E.Exit");
                 String choice = input.nextLine();
                 
                 //Evaluate user choice
@@ -218,6 +218,49 @@ public class JDBCMain {
                                 ,dispNull(subject),dispNull(bookTitle),dispNull(yearPublished),dispNull(numberPages));
                     }
                     System.out.println("\n");
+                }
+                
+                if(choice.equals("8")) {
+                    try{
+                        //Remove foreign key constraint from books so that we can edit publisher name
+                        query = "alter table books drop constraint books_publisher_fk";
+                        stmt.executeUpdate(query);
+                        //Prepared statement to update publisher name from PUBLISHERS
+                        query = "update publishers set publishername = ? where publishername = ?";
+                        preparedStatement2 = conn.prepareStatement(query);
+                        //User inputs what publisher they would like to be renamed
+                        System.out.println("What publisher would you like to be renamed?");
+                        String oldPubName = input.nextLine();
+                        //User inputs what the new publisher will be
+                        System.out.println("Please input the name of the new publisher:");
+                        String newPubName = input.nextLine();
+                        //First prepared statement is set and ran with new and old publisher name
+                        preparedStatement2.setString(1, newPubName);
+                        preparedStatement2.setString(2, oldPubName);
+                        int rows = preparedStatement2.executeUpdate();
+                        
+                        //Second prepared statement to edit publisher name from BOOKS
+                        query = "update books set publishername = ? where publishername = ?";
+                        preparedStatement2 = conn.prepareStatement(query);
+                        preparedStatement2.setString(1, newPubName);
+                        preparedStatement2.setString(2, oldPubName);
+                        rows += preparedStatement2.executeUpdate();
+                           
+                        
+                        //Foreign key constraint is added again
+                        query = "alter table books "
+                                + "add constraint books_publisher_fk foreign key (publishername) references publishers(publishername)";
+                        stmt.executeUpdate(query);
+                        
+                        System.out.println("Executed. " + rows + " row(s) affected.\n");
+                    
+                    } catch (SQLIntegrityConstraintViolationException e) {
+                        
+                        System.out.println("Execution failed! Invalid input.");
+                        System.out.println(e.getMessage());
+                    } catch (InputMismatchException e) {
+                        System.out.println("Execution failed! Invalid input type (String type required).");
+                    }
                 }
                                 
                 if(choice.equals("E") || choice.equals("e")) {
