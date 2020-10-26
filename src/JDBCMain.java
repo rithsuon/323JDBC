@@ -158,6 +158,9 @@ public class JDBCMain {
                         System.out.println(e.getMessage());
                     } catch (InputMismatchException e) {
                         System.out.println("Execution failed! Invalid input type (int type required).");
+                    }   catch (SQLDataException e) {
+                        System.out.println("Execution failed! Invalid input length.");
+                        System.out.println(e.getMessage());
                     }
                 }
                 
@@ -226,9 +229,6 @@ public class JDBCMain {
                         query = "insert into publishers(publishername, publisheraddress, publisherphone, publisheremail) values"
                                 + "(?, ?, ?, ?)";
                         preparedStatement2 = conn.prepareStatement(query);
-                        //User inputs what publisher they would like to replace
-                        System.out.println("What publisher would you like to be replaced?");
-                        String oldPubName = input.nextLine();
                         
                         //User inputs all info for the new publisher
                         System.out.println("Please input the name of the new publisher:");
@@ -240,17 +240,21 @@ public class JDBCMain {
                         System.out.println("Please input the email address of the new publisher:");
                         String newPubEmail = input.nextLine();
                         
-                        //Remove foreign key constraint from books so that we can edit publisher name for books
-                        query = "alter table books drop constraint books_publisher_fk";
-                        stmt.executeUpdate(query);
-                        
                         //First prepared statement is set and ran with new and old publisher name
                         preparedStatement2.setString(1, newPubName);
                         preparedStatement2.setString(2, newPubAddress);
                         preparedStatement2.setString(3, newPubPhone);
                         preparedStatement2.setString(4, newPubEmail);
-                        //preparedStatement2.setString(5, oldPubName);
+              
                         int rows = preparedStatement2.executeUpdate();
+                        
+                        //Remove foreign key constraint from books so that we can edit publisher name for books
+                        query = "alter table books drop constraint books_publisher_fk";
+                        stmt.executeUpdate(query);
+                        
+                        //User inputs what publisher they would like to replace
+                        System.out.println("What publisher would you like to be replaced?");
+                        String oldPubName = input.nextLine();
                         
                         //Second prepared statement to edit publisher name from BOOKS
                         query = "update books set publishername = ? where publishername = ?";
@@ -265,13 +269,16 @@ public class JDBCMain {
                         stmt.executeUpdate(query);
                         
                         System.out.println("Executed. " + rows + " row(s) affected.\n");
-                    
+                        
                     } catch (SQLIntegrityConstraintViolationException e) {
                         
                         System.out.println("Execution failed! Invalid input.");
                         System.out.println(e.getMessage());
                     } catch (InputMismatchException e) {
                         System.out.println("Execution failed! Invalid input type (String type required).");
+                    }  catch (SQLDataException e) {
+                        System.out.println("Execution failed! Invalid input length.");
+                        System.out.println(e.getMessage());
                     }
                 }
                 
