@@ -53,7 +53,8 @@ public class JDBCMain {
                 //Print menu
                 System.out.println("\nWhat would you like to do?\n1.List all writing groups\n2.List all publishers\n"
                         + "3.List all book titles\n"+ "4.List all data for a writing group\n"+"5.Insert a new book\n"
-                        + "6.List all data from a publisher\n"+"E.Exit");
+                        + "6.List all data from a publisher\n"+
+                        "7.List all data from a book\n"+"E.Exit");
                 String choice = input.nextLine();
                 
                 //Evaluate user choice
@@ -108,7 +109,7 @@ public class JDBCMain {
                     choice = input.nextLine();
                     preparedStatement2.setString(1, choice);
                     rs = preparedStatement2.executeQuery();
-                    
+                    System.out.printf(PRINT_FORMAT2,"GROUPNAME","PUBLISHERNAME","PUBLISHERADDRESS","PUBLISHERPHONE","PUBLISHEREMAIL","HEADWRITER","YEARFORMED","SUBJECT","BOOKTITLE");
                     while(rs.next()){
                         String groupName = rs.getString("GROUPNAME");
                         String publisherName = rs.getString("PUBLISHERNAME");
@@ -164,7 +165,37 @@ public class JDBCMain {
                     choice = input.nextLine();
                     preparedStatement2.setString(1, choice);
                     rs = preparedStatement2.executeQuery();
-                    
+                    System.out.printf(PRINT_FORMAT2,"GROUPNAME","PUBLISHERNAME","PUBLISHERADDRESS","PUBLISHERPHONE","PUBLISHEREMAIL","HEADWRITER","YEARFORMED","SUBJECT","BOOKTITLE","YEARPUBLISHED","NUMBERPAGES");
+
+                    while(rs.next()){
+                        String groupName = rs.getString("GROUPNAME");
+                        String publisherName = rs.getString("PUBLISHERNAME");
+                        String address = rs.getString("PUBLISHERADDRESS");
+                        String phone = rs.getString("PUBLISHERPHONE");
+                        String email = rs.getString("PUBLISHEREMAIL");
+                        String headWriter = rs.getString("HEADWRITER");
+                        String yearFormed = rs.getString("YEARFORMED");
+                        String subject = rs.getString("SUBJECT");
+                        String bookTitle = rs.getString("BOOKTITLE");
+                        String yearPublished = rs.getString("YEARPUBLISHED");
+                        String numberPages = rs.getString("NUMBERPAGES");
+                        System.out.printf(PRINT_FORMAT2, dispNull(groupName), dispNull(publisherName),dispNull(address),dispNull(phone),
+                                dispNull(email),dispNull(headWriter),dispNull(yearFormed)
+                                ,dispNull(subject),dispNull(bookTitle),dispNull(yearPublished),dispNull(numberPages));
+                    }
+                    System.out.println("\n");
+                }
+                
+                if(choice.equals("7")){
+                    String PRINT_FORMAT2 ="%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s\n";
+                    query = "select * from books natural join publishers natural join WRITINGGROUPS where booktitle = ?";
+                    preparedStatement2 = conn.prepareStatement(query);
+                    System.out.println("What book would you like to get all data from?");
+                    choice = input.nextLine();
+                    preparedStatement2.setString(1, choice);
+                    rs = preparedStatement2.executeQuery();
+                    System.out.printf(PRINT_FORMAT2,"GROUPNAME","PUBLISHERNAME","PUBLISHERADDRESS","PUBLISHERPHONE","PUBLISHEREMAIL","HEADWRITER","YEARFORMED","SUBJECT","BOOKTITLE","YEARPUBLISHED","NUMBERPAGES");
+
                     while(rs.next()){
                         String groupName = rs.getString("GROUPNAME");
                         String publisherName = rs.getString("PUBLISHERNAME");
