@@ -222,21 +222,33 @@ public class JDBCMain {
                 
                 if(choice.equals("8")) {
                     try{
-                        //Remove foreign key constraint from books so that we can edit publisher name
-                        query = "alter table books drop constraint books_publisher_fk";
-                        stmt.executeUpdate(query);
                         //Prepared statement to update publisher name from PUBLISHERS
-                        query = "update publishers set publishername = ? where publishername = ?";
+                        query = "update publishers set publishername = ?, publisheraddress = ?,"
+                                + "publisherphone = ?, publisheremail = ? where publishername = ?";
                         preparedStatement2 = conn.prepareStatement(query);
                         //User inputs what publisher they would like to be renamed
-                        System.out.println("What publisher would you like to be renamed?");
+                        System.out.println("What publisher would you like to be replaced?");
                         String oldPubName = input.nextLine();
                         //User inputs what the new publisher will be
                         System.out.println("Please input the name of the new publisher:");
                         String newPubName = input.nextLine();
+                        System.out.println("Please input the address of the new publisher:");
+                        String newPubAddress = input.nextLine();
+                        System.out.println("Please input the phone number of the new publisher:");
+                        String newPubPhone = input.nextLine();
+                        System.out.println("Please input the email address of the new publisher:");
+                        String newPubEmail = input.nextLine();
+                        
+                        //Remove foreign key constraint from books so that we can edit publisher name
+                        query = "alter table books drop constraint books_publisher_fk";
+                        stmt.executeUpdate(query);
+                        
                         //First prepared statement is set and ran with new and old publisher name
                         preparedStatement2.setString(1, newPubName);
-                        preparedStatement2.setString(2, oldPubName);
+                        preparedStatement2.setString(2, newPubAddress);
+                        preparedStatement2.setString(3, newPubPhone);
+                        preparedStatement2.setString(4, newPubEmail);
+                        preparedStatement2.setString(5, oldPubName);
                         int rows = preparedStatement2.executeUpdate();
                         
                         //Second prepared statement to edit publisher name from BOOKS
@@ -245,9 +257,8 @@ public class JDBCMain {
                         preparedStatement2.setString(1, newPubName);
                         preparedStatement2.setString(2, oldPubName);
                         rows += preparedStatement2.executeUpdate();
-                           
-                        
-                        //Foreign key constraint is added again
+                         
+                        //Foreign key constraint is added back
                         query = "alter table books "
                                 + "add constraint books_publisher_fk foreign key (publishername) references publishers(publishername)";
                         stmt.executeUpdate(query);
