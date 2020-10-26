@@ -24,7 +24,7 @@ public class JDBCMain {
     
     public static void main(String[] args) {
         String query;
-        ResultSet rs;
+        ResultSet rs = null;
         System.out.println("Enter name of the database: ");
         DBNAME = input.nextLine();
         System.out.println("Enter username: ");
@@ -299,6 +299,14 @@ public class JDBCMain {
                 if (stmt != null) {
                     stmt.close();
                 }
+                if (preparedStatement2 != null) {
+                    preparedStatement2.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+                
+                input.close();
             } catch (SQLException se2) {
             }// nothing we can do
             try {
