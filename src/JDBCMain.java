@@ -56,7 +56,7 @@ public class JDBCMain {
                 System.out.println("\nWhat would you like to do?\n1.List all writing groups\n2.List all publishers\n"
                         + "3.List all book titles\n"+ "4.List all data for a writing group\n"+"5.Insert a new book\n"
                         + "6.List all data from a publisher\n"+
-                        "7.List all data from a book\n"+"8.Insert a new publisher\n"+"E.Exit");
+                        "7.List all data from a book\n"+"8.Insert a new publisher\n"+"9.Delete a specific book\n"+"E.Exit");
                 String choice = input.nextLine();
                 
                 //Evaluate user choice
@@ -261,6 +261,24 @@ public class JDBCMain {
                     } catch (InputMismatchException e) {
                         System.out.println("Execution failed! Invalid input type (String type required).");
                     }
+                }
+                
+                if(choice.equals("9")) {
+                    //Delete query
+                    query = "delete from BOOKS where groupname = ? and booktitle = ?";
+                    preparedStatement2 = conn.prepareStatement(query);
+                    //User inputs writing group
+                    System.out.println("Enter the writing group the book belongs to: ");
+                    String groupName = input.nextLine();
+                    //User inputs book title
+                    System.out.println("Enter the title of the book: ");
+                    String bookTitle = input.nextLine();
+                    
+                    //Prepared statement is set and ran
+                    preparedStatement2.setString(1, groupName);
+                    preparedStatement2.setString(2, bookTitle);
+                    int rows = preparedStatement2.executeUpdate();
+                    System.out.println("Executed. " + rows + " row(s) affected.\n");
                 }
                                 
                 if(choice.equals("E") || choice.equals("e")) {
