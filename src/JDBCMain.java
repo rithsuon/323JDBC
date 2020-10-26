@@ -51,7 +51,7 @@ public class JDBCMain {
             //Main loop
             while(true){
                 //Print menu
-                System.out.println("What would you like to do?\n1.List all writing groups\n2.List all publishers\n"
+                System.out.println("\nWhat would you like to do?\n1.List all writing groups\n2.List all publishers\n"
                         + "3.List all book titles\n"+ "4.List all data for a writing group\n"+"5.Insert a new book\n"
                         + "6.List all data from a publisher\n"+"E.Exit");
                 String choice = input.nextLine();
@@ -126,14 +126,34 @@ public class JDBCMain {
                 }
                 
                 if(choice.equals("5")) {
+                    try {
                     //inserting a new book || publisher exists, writinggroup exists, bookname doesn't already exist
-                    query = "insert into books(groupname, publishername, booktitle, yearpublished, numberpages) values ('?', '?', '?', ?, ?)";
+                    query = "insert into books(groupname, publishername, booktitle, yearpublished, numberpages) values (?, ?, ?, ?, ?)";
+                    preparedStatement2 = conn.prepareStatement(query);
                     System.out.println("Enter writing group name: ");
                     String group = input.nextLine();
                     System.out.println("Enter publisher name: ");
                     String pub = input.nextLine();
                     System.out.println("Enter book title: ");
                     String title = input.nextLine();
+                    System.out.println("Enter year published: ");
+                    int yearPub = input.nextInt();
+                    System.out.println("Enter number of pages: ");
+                    int numPages = input.nextInt();
+                    preparedStatement2.setString(1, group);
+                    preparedStatement2.setString(2, pub);
+                    preparedStatement2.setString(3, title);
+                    preparedStatement2.setInt(4, yearPub);
+                    preparedStatement2.setInt(5, numPages);
+                    
+                    int rows = preparedStatement2.executeUpdate();
+                    System.out.println("Executed. " + rows + " rows affected.\n");
+                    
+                    } catch (SQLIntegrityConstraintViolationException e) {
+                        
+                        System.out.println("Execution failed! Invalid input.");
+                        System.out.println(e.getMessage());
+                    }
                 }
                 
                 if(choice.equals("6")){
