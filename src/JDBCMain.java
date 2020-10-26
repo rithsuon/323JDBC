@@ -98,16 +98,31 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
+                if(choice.equals("5")) {
+                    //inserting a new book || publisher exists, writinggroup exists, bookname doesn't already exist
+                    query = "insert into books(groupname, publishername, booktitle, yearpublished, numberpages) values ('?', '?', '?', ?, ?)";
+                    System.out.println("Enter writing group name: ");
+                    String group = input.nextLine();
+                    System.out.println("Enter publisher name: ");
+                    String pub = input.nextLine();
+                    System.out.println("Enter book title: ");
+                    String title = input.nextLine();
+                    
+                }
+                
                 if(choice.equals("E") || choice.equals("e")) {
                     break;
                 }
             }
             
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLNonTransientConnectionException e) {
+            System.out.println("Connection to Database failed. (Database was not found)");
+            System.out.println("Try again.");
         } catch (ClassNotFoundException ce) {
             ce.printStackTrace();
-        } finally {
+        } catch (SQLException e) {
+            
+        }finally {
             //finally block used to close resources
             try {
                 if (stmt != null) {
