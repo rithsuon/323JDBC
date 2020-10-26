@@ -39,6 +39,7 @@ public class JDBCMain {
         }
         Connection conn = null;
         Statement stmt = null;
+        PreparedStatement preparedStatement2 =null;
         try {
             //need to establish driver
             Class.forName(JDBC_DRIVER);
@@ -51,7 +52,7 @@ public class JDBCMain {
             while(true){
                 //Print menu
                 System.out.println("What would you like to do?\n1.List all writing groups\n2.List all publishers\n"
-                        + "3.List all book titles\nE.Exit");
+                        + "3.List all book titles\n"+ "4.List all data for a writing group\n"+"E.Exit");
                 String choice = input.nextLine();
                 
                 //Evaluate user choice
@@ -98,6 +99,31 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
+                if(choice.equals("4")){
+                    String PRINT_FORMAT2 ="%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s\n";
+                    query = "select * from WRITINGGROUPS natural join books natural join publishers where groupname = ?";
+                    preparedStatement2 = conn.prepareStatement(query);
+                    System.out.println("What group would you like to get all data from?");
+                    choice = input.nextLine();
+                    preparedStatement2.setString(1, choice);
+                    rs = preparedStatement2.executeQuery();
+                    
+                    while(rs.next()){
+                        String groupName = rs.getString("GROUPNAME");
+                        String publisherName = rs.getString("PUBLISHERNAME");
+                        String address = rs.getString("PUBLISHERADDRESS");
+                        String phone = rs.getString("PUBLISHERPHONE");
+                        String email = rs.getString("PUBLISHEREMAIL");
+                        String headWriter = rs.getString("HEADWRITER");
+                        String yearFormed = rs.getString("YEARFORMED");
+                        String subject = rs.getString("SUBJECT");
+                        String bookTitle = rs.getString("BOOKTITLE");
+                        System.out.printf(PRINT_FORMAT2, dispNull(groupName), dispNull(publisherName),dispNull(address),dispNull(phone),
+                                dispNull(email),dispNull(headWriter),dispNull(yearFormed),dispNull(subject),dispNull(bookTitle));
+                    }
+                    System.out.println("\n");
+                }
+                
                 if(choice.equals("5")) {
                     //inserting a new book || publisher exists, writinggroup exists, bookname doesn't already exist
                     query = "insert into books(groupname, publishername, booktitle, yearpublished, numberpages) values ('?', '?', '?', ?, ?)";
@@ -107,9 +133,8 @@ public class JDBCMain {
                     String pub = input.nextLine();
                     System.out.println("Enter book title: ");
                     String title = input.nextLine();
-                    
                 }
-                
+                                
                 if(choice.equals("E") || choice.equals("e")) {
                     break;
                 }
@@ -121,7 +146,7 @@ public class JDBCMain {
         } catch (ClassNotFoundException ce) {
             ce.printStackTrace();
         } catch (SQLException e) {
-            
+            e.printStackTrace();
         }finally {
             //finally block used to close resources
             try {
