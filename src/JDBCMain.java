@@ -20,6 +20,7 @@ public class JDBCMain {
     static Scanner input = new Scanner(System.in);
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static final String PRINT_FORMAT="%-25s%-25s%-25s%-25s\n";
+    static final String PRINT_FORMAT2 = "%-25s%-25s%-45s%-25s%-35s" + PRINT_FORMAT;
     
     public static void main(String[] args) {
         String query;
@@ -103,15 +104,14 @@ public class JDBCMain {
                 }
                 
                 if(choice.equals("4")){
-                    //String PRINT_FORMAT2 ="%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s\n";
-                    String PRINT_FORMAT2 = "%-25s%-35s%-50s%-25s%-35s" + PRINT_FORMAT;
+                    String LOCAL_FORMAT = "%-25s%-35s%-50s%-25s%-35s" + PRINT_FORMAT;
                     query = "select * from WRITINGGROUPS natural join books natural join publishers where groupname = ?";
                     preparedStatement2 = conn.prepareStatement(query);
                     System.out.println("What group would you like to get all data from?");
                     choice = input.nextLine();
                     preparedStatement2.setString(1, choice);
                     rs = preparedStatement2.executeQuery();
-                    System.out.printf(PRINT_FORMAT2,"GROUPNAME","PUBLISHERNAME","PUBLISHERADDRESS","PUBLISHERPHONE","PUBLISHEREMAIL","HEADWRITER","YEARFORMED","SUBJECT","BOOKTITLE");
+                    System.out.printf(LOCAL_FORMAT,"GROUPNAME","PUBLISHERNAME","PUBLISHERADDRESS","PUBLISHERPHONE","PUBLISHEREMAIL","HEADWRITER","YEARFORMED","SUBJECT","BOOKTITLE");
                     while(rs.next()){
                         String groupName = rs.getString("GROUPNAME");
                         String publisherName = rs.getString("PUBLISHERNAME");
@@ -122,7 +122,7 @@ public class JDBCMain {
                         String yearFormed = rs.getString("YEARFORMED");
                         String subject = rs.getString("SUBJECT");
                         String bookTitle = rs.getString("BOOKTITLE");
-                        System.out.printf(PRINT_FORMAT2, dispNull(groupName), dispNull(publisherName),dispNull(address),dispNull(phone),
+                        System.out.printf(LOCAL_FORMAT, dispNull(groupName), dispNull(publisherName),dispNull(address),dispNull(phone),
                                 dispNull(email),dispNull(headWriter),dispNull(yearFormed),dispNull(subject),dispNull(bookTitle));
                     }
                     System.out.println("\n");
@@ -162,8 +162,6 @@ public class JDBCMain {
                 }
                 
                 if(choice.equals("6")){
-                    //String PRINT_FORMAT2 ="%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s\n";
-                    String PRINT_FORMAT2 = "%-25s%-25s%-45s%-25s%-35s" + PRINT_FORMAT;
                     query = "select * from PUBLISHERS natural join BOOKS natural join WRITINGGROUPS where publishername = ?";
                     preparedStatement2 = conn.prepareStatement(query);
                     System.out.println("What publisher would you like to get all data from?");
@@ -192,12 +190,14 @@ public class JDBCMain {
                 }
                 
                 if(choice.equals("7")){
-                    String PRINT_FORMAT2 ="%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s%-45s\n";
-                    query = "select * from books natural join publishers natural join WRITINGGROUPS where booktitle = ?";
+                    query = "select * from books natural join publishers natural join WRITINGGROUPS where booktitle = ? and groupname = ?";
                     preparedStatement2 = conn.prepareStatement(query);
                     System.out.println("What book would you like to get all data from?");
                     choice = input.nextLine();
+                    System.out.println("Please specify a writing group: ");
+                    String group = input.nextLine();
                     preparedStatement2.setString(1, choice);
+                    preparedStatement2.setString(2, group);
                     rs = preparedStatement2.executeQuery();
                     System.out.printf(PRINT_FORMAT2,"GROUPNAME","PUBLISHERNAME","PUBLISHERADDRESS","PUBLISHERPHONE","PUBLISHEREMAIL","HEADWRITER","YEARFORMED","SUBJECT","BOOKTITLE","YEARPUBLISHED","NUMBERPAGES");
 
@@ -227,7 +227,7 @@ public class JDBCMain {
             
         } catch (SQLNonTransientConnectionException e) {
             System.out.println("Connection to Database failed. (Database was not found)");
-            System.out.println("Try again.");
+            System.out.println("Program will exit.");
         } catch (ClassNotFoundException ce) {
             ce.printStackTrace();
         } catch (SQLException e) {
