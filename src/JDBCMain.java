@@ -17,7 +17,7 @@ public class JDBCMain {
     static Scanner input = new Scanner(System.in);
     static final String JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
     static final String PRINT_FORMAT="%-25s%-25s%-25s%-25s\n";
-    static final String PRINT_FORMAT2 = "%-25s%-25s%-45s%-25s%-35s" + PRINT_FORMAT;
+    static final String PRINT_FORMAT2 = "%-25s%-25s%-45s%-25s%-35s%-25s%-25s" + PRINT_FORMAT;
     
     //Main
     public static void main(String[] args) {
