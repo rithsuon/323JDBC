@@ -1,17 +1,14 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * CECS323 - JDBC Project
+ * By: Rithrangsey Suon, Andrew Baltazar & Nicholas Bautista
+ * Due: 10/27/2020
  */
 import java.sql.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-/**
- *
- * @author Rith
- * 
- * 
- */
+
+
+//Main JBDC Class
 public class JDBCMain {
     public static String DB_URL = "jdbc:derby://localhost:1527/";
     public static String DBNAME;
@@ -22,6 +19,7 @@ public class JDBCMain {
     static final String PRINT_FORMAT="%-25s%-25s%-25s%-25s\n";
     static final String PRINT_FORMAT2 = "%-25s%-25s%-45s%-25s%-35s" + PRINT_FORMAT;
     
+    //Main
     public static void main(String[] args) {
         String query;
         ResultSet rs = null;
@@ -60,7 +58,8 @@ public class JDBCMain {
                 String choice = input.nextLine();
                 
                 //Evaluate user choice
-                if (choice.equals("1")){
+                //Menue choice 1: List all writing groups
+                if(choice.equals("1")){
                     query = "select * from WRITINGGROUPS";
                     rs = stmt.executeQuery(query);
                     System.out.println("\nWriting Groups: ");
@@ -75,6 +74,7 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
+                //Menu choice 2: List all publishers
                 else if(choice.equals("2")){
                     query = "select * from PUBLISHERS";
                     rs = stmt.executeQuery(query);
@@ -91,6 +91,7 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
+                //Menu choice 3: List all booktitles
                 else if(choice.equals("3")){
                     query = "select BOOKTITLE from BOOKS";
                     rs = stmt.executeQuery(query);
@@ -103,6 +104,7 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
+                //Menu choice 4: List all data from a group specified by user
                 else if(choice.equals("4")){
                     String LOCAL_FORMAT = "%-25s%-35s%-50s%-25s%-35s" + PRINT_FORMAT;
                     query = "select * from WRITINGGROUPS natural join books natural join publishers where groupname = ?";
@@ -128,6 +130,7 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
+                //Menu choice 5: Insert a new book
                 else if(choice.equals("5")) {
                     try {
                     //inserting a new book || publisher exists, writinggroup exists, bookname doesn't already exist
@@ -170,6 +173,7 @@ public class JDBCMain {
                     }
                 }
                 
+                //Menu choice 6: List all data for a publisher specified by user
                 else if(choice.equals("6")){
                     query = "select * from PUBLISHERS natural join BOOKS natural join WRITINGGROUPS where publishername = ?";
                     preparedStatement2 = conn.prepareStatement(query);
@@ -198,6 +202,7 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
+                //Menu choice 7: List all data from a book specified by user
                 else if(choice.equals("7")){
                     query = "select * from books natural join publishers natural join WRITINGGROUPS where booktitle = ? and groupname = ?";
                     preparedStatement2 = conn.prepareStatement(query);
@@ -229,6 +234,7 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
+                //Menu choice 8: Insert a new publisher
                 else if(choice.equals("8")) {
                     try{
                         //Prepared statement to insert new publisher
@@ -299,6 +305,7 @@ public class JDBCMain {
                     }
                 }
                 
+                //Menu choice 9: Delete book specified by user
                 else if(choice.equals("9")) {
                     //Delete query
                     query = "delete from BOOKS where groupname = ? and booktitle = ?";
