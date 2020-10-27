@@ -99,14 +99,14 @@ public class JDBCMain {
                 
                 //Menu choice 4: List all data from a group specified by user
                 else if(choice.equals("4")){
-                    String LOCAL_FORMAT = "%-25s%-35s%-50s%-25s%-35s" + PRINT_FORMAT;
+                    String LOCAL_FORMAT = "%-25s%-35s%-50s%-25s%-35s%-25s%-25s" + PRINT_FORMAT;
                     query = "select * from WRITINGGROUPS natural join books natural join publishers where groupname = ?";
                     preparedStatement2 = conn.prepareStatement(query);
                     System.out.println("What group would you like to get all data from?");
                     choice = input.nextLine();
                     preparedStatement2.setString(1, choice);
                     rs = preparedStatement2.executeQuery();
-                    System.out.printf(LOCAL_FORMAT,"GROUPNAME","PUBLISHERNAME","PUBLISHERADDRESS","PUBLISHERPHONE","PUBLISHEREMAIL","HEADWRITER","YEARFORMED","SUBJECT","BOOKTITLE");
+                    System.out.printf(LOCAL_FORMAT,"GROUPNAME","PUBLISHERNAME","PUBLISHERADDRESS","PUBLISHERPHONE","PUBLISHEREMAIL","HEADWRITER","YEARFORMED","SUBJECT","BOOKTITLE","YEARPUBLISHED","NUMBERPAGES");
                     while(rs.next()){
                         String groupName = rs.getString("GROUPNAME");
                         String publisherName = rs.getString("PUBLISHERNAME");
@@ -117,8 +117,10 @@ public class JDBCMain {
                         String yearFormed = rs.getString("YEARFORMED");
                         String subject = rs.getString("SUBJECT");
                         String bookTitle = rs.getString("BOOKTITLE");
+                        String yearPublished = rs.getString("YEARPUBLISHED");
+                        String numberPages = rs.getString("NUMBERPAGES");
                         System.out.printf(LOCAL_FORMAT, dispNull(groupName), dispNull(publisherName),dispNull(address),dispNull(phone),
-                                dispNull(email),dispNull(headWriter),dispNull(yearFormed),dispNull(subject),dispNull(bookTitle));
+                                dispNull(email),dispNull(headWriter),dispNull(yearFormed),dispNull(subject),dispNull(bookTitle),dispNull(yearPublished),dispNull(numberPages));
                     }
                     System.out.println("\n");
                 }
