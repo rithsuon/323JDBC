@@ -41,7 +41,7 @@ public class JDBCMain {
         }
         Connection conn = null;
         Statement stmt = null;
-        PreparedStatement preparedStatement2 =null;
+        PreparedStatement preparedStatement2 = null;
         try {
             //need to establish driver
             Class.forName(JDBC_DRIVER);
@@ -56,7 +56,7 @@ public class JDBCMain {
                 System.out.println("\nWhat would you like to do?\n1.List all writing groups\n2.List all publishers\n"
                         + "3.List all book titles\n"+ "4.List all data for a writing group\n"+"5.Insert a new book\n"
                         + "6.List all data from a publisher\n"+
-                        "7.List all data from a book\n"+"8.Insert a new publisher\n"+"9.Delete a specific book\n"+"E.Exit");
+                        "7.List all data from a book\n"+"8.Insert a new publisher and replace old publisher\n"+"9.Delete a specific book\n"+"E.Exit");
                 String choice = input.nextLine();
                 
                 //Evaluate user choice
@@ -75,7 +75,7 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
-                if(choice.equals("2")){
+                else if(choice.equals("2")){
                     query = "select * from PUBLISHERS";
                     rs = stmt.executeQuery(query);
                     System.out.println("\nPublishers:");
@@ -91,7 +91,7 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
-                if(choice.equals("3")){
+                else if(choice.equals("3")){
                     query = "select BOOKTITLE from BOOKS";
                     rs = stmt.executeQuery(query);
                     System.out.println("\nBooks:");
@@ -103,7 +103,7 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
-                if(choice.equals("4")){
+                else if(choice.equals("4")){
                     String LOCAL_FORMAT = "%-25s%-35s%-50s%-25s%-35s" + PRINT_FORMAT;
                     query = "select * from WRITINGGROUPS natural join books natural join publishers where groupname = ?";
                     preparedStatement2 = conn.prepareStatement(query);
@@ -128,7 +128,7 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
-                if(choice.equals("5")) {
+                else if(choice.equals("5")) {
                     try {
                     //inserting a new book || publisher exists, writinggroup exists, bookname doesn't already exist
                     query = "insert into books(groupname, publishername, booktitle, yearpublished, numberpages) values (?, ?, ?, ?, ?)";
@@ -151,6 +151,7 @@ public class JDBCMain {
                     
                     int rows = preparedStatement2.executeUpdate();
                     System.out.println("Executed. " + rows + " row(s) affected.\n");
+                   
                     
                     } catch (SQLIntegrityConstraintViolationException e) {
                         
@@ -161,10 +162,15 @@ public class JDBCMain {
                     }   catch (SQLDataException e) {
                         System.out.println("Execution failed! Invalid input length.");
                         System.out.println(e.getMessage());
+                    } finally {
+                        //clear input scanner for menu
+                        if(input.hasNextLine()) {
+                        input.nextLine();
+                        }
                     }
                 }
                 
-                if(choice.equals("6")){
+                else if(choice.equals("6")){
                     query = "select * from PUBLISHERS natural join BOOKS natural join WRITINGGROUPS where publishername = ?";
                     preparedStatement2 = conn.prepareStatement(query);
                     System.out.println("What publisher would you like to get all data from?");
@@ -192,7 +198,7 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
-                if(choice.equals("7")){
+                else if(choice.equals("7")){
                     query = "select * from books natural join publishers natural join WRITINGGROUPS where booktitle = ? and groupname = ?";
                     preparedStatement2 = conn.prepareStatement(query);
                     System.out.println("What book would you like to get all data from?");
@@ -223,7 +229,7 @@ public class JDBCMain {
                     System.out.println("\n");
                 }
                 
-                if(choice.equals("8")) {
+                else if(choice.equals("8")) {
                     try{
                         //Prepared statement to insert new publisher
                         query = "insert into publishers(publishername, publisheraddress, publisherphone, publisheremail) values"
@@ -253,7 +259,7 @@ public class JDBCMain {
                         stmt.executeUpdate(query);
                         
                         //User inputs what publisher they would like to replace
-                        System.out.println("What publisher would you like to be replaced?");
+                        System.out.println("What publisher would you like to be replaced (Old publisher)?");
                         String oldPubName = input.nextLine();
                         
                         //Second prepared statement to edit publisher name from BOOKS
@@ -261,14 +267,25 @@ public class JDBCMain {
                         preparedStatement2 = conn.prepareStatement(query);
                         preparedStatement2.setString(1, newPubName);
                         preparedStatement2.setString(2, oldPubName);
-                        rows += preparedStatement2.executeUpdate();
+                        int rows2 = preparedStatement2.executeUpdate();
                          
                         //Foreign key constraint is added back
                         query = "alter table books "
                                 + "add constraint books_publisher_fk foreign key (publishername) references publishers(publishername)";
                         stmt.executeUpdate(query);
                         
-                        System.out.println("Executed. " + rows + " row(s) affected.\n");
+                        //check to see if old publisher was found
+                        if(rows2 == 0) { 
+                           System.out.println("\"Old\" Publisher not found. Insert Failed.");
+                           query = "delete from publishers where publishername = ?";
+                           preparedStatement2 = conn.prepareStatement(query);
+                           preparedStatement2.setString(1, newPubName);
+                           preparedStatement2.executeUpdate();
+                        } else {
+                            rows += rows2;
+                            System.out.println("Executed. " + rows + " row(s) affected.\n");
+                        }
+                        
                         
                     } catch (SQLIntegrityConstraintViolationException e) {
                         
@@ -282,7 +299,7 @@ public class JDBCMain {
                     }
                 }
                 
-                if(choice.equals("9")) {
+                else if(choice.equals("9")) {
                     //Delete query
                     query = "delete from BOOKS where groupname = ? and booktitle = ?";
                     preparedStatement2 = conn.prepareStatement(query);
@@ -300,8 +317,12 @@ public class JDBCMain {
                     System.out.println("Executed. " + rows + " row(s) affected.\n");
                 }
                                 
-                if(choice.equals("E") || choice.equals("e")) {
+                else if(choice.equals("E") || choice.equals("e")) {
                     break;
+                }
+                
+                else {
+                    System.out.println("Invalid menu input.");
                 }
             }
             
