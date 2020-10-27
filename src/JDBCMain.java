@@ -60,33 +60,26 @@ public class JDBCMain {
                 //Evaluate user choice
                 //Menue choice 1: List all writing groups
                 if(choice.equals("1")){
-                    query = "select * from WRITINGGROUPS";
+                    query = "select GROUPNAME from WRITINGGROUPS";
                     rs = stmt.executeQuery(query);
                     System.out.println("\nWriting Groups: ");
-                    System.out.printf(PRINT_FORMAT, "GROUPNAME", "HEADWRITER", "YEARFORMED","SUBJECT");
+                    System.out.printf("GROUPNAME\n");
                     while (rs.next()){
                         String groupName = rs.getString("GROUPNAME");
-                        String headWriter = rs.getString("HEADWRITER");
-                        String yearFormed = rs.getString("YEARFORMED");
-                        String subject = rs.getString("SUBJECT");
-                        System.out.printf(PRINT_FORMAT, dispNull(groupName), dispNull(headWriter), dispNull(yearFormed), dispNull(subject));
+                        System.out.printf(dispNull(groupName) + "\n");
                     }
                     System.out.println("\n");
                 }
                 
                 //Menu choice 2: List all publishers
                 else if(choice.equals("2")){
-                    query = "select * from PUBLISHERS";
+                    query = "select PUBLISHERNAME from PUBLISHERS";
                     rs = stmt.executeQuery(query);
                     System.out.println("\nPublishers:");
-                    String localFormat = "%-35s%-45s%-35s%-35s\n";
-                    System.out.printf(localFormat, "PUBLISHERNAME", "PUBLISHERADDRESS", "PUBLISHERPHONE","PUBLISHEREMAIL");
+                    System.out.printf("PUBLISHERNAME\n");
                     while(rs.next()){
                         String publisherName = rs.getString("PUBLISHERNAME");
-                        String address = rs.getString("PUBLISHERADDRESS");
-                        String phone = rs.getString("PUBLISHERPHONE");
-                        String email = rs.getString("PUBLISHEREMAIL");
-                        System.out.printf(localFormat, dispNull(publisherName), dispNull(address), dispNull(phone), dispNull(email));
+                        System.out.printf(dispNull(publisherName) + "\n");
                     }
                     System.out.println("\n");
                 }
